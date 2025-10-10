@@ -1,27 +1,17 @@
 pipeline {
     agent any
+
     stages {
-        stage('Checkout') {
+        stage('Print Hello') {
             steps {
-                git branch: 'main', url: 'https://github.com/MohamedMagdy840/jenkins-repo.git'
-  // Replace with your repository URL
+                echo 'Hello'
             }
         }
-        stage('Run Hello World') {
+
+        stage('Print Jenkins') {
             steps {
-                script {
-                    sh 'chmod +x hello.sh'  
-                    sh './hello.sh'          
-                }
-            } 
-        }
-    }  
-    post {
-        success {
-            echo 'Pipeline completed successfully!'
-        }
-        failure {
-            echo 'Pipeline failed!'
+                echo 'Jenkins'
+            }
         }
     }
 }
