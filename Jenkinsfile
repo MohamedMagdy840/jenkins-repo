@@ -23,7 +23,7 @@ pipeline {
                 script {
                     // Run Docker image and show running containers
                     sh '''
-                        docker run --name myapp-container -d myapp:latest
+                        docker run --name app-${BUILD_NUMBER} -d myapp:latest
                         docker ps
                     '''
                 }
