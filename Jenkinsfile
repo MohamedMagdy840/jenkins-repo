@@ -1,21 +1,15 @@
 pipeline {
     agent any
-
-    parameters {
-        // Allow user to choose between dev or main branch
-        choice(
-            name: 'ENV_NAME',
-            choices: ['prod', 'dev'],
-            description: 'Select the docker env deployment'
-        )
+    
+    environment {
+        APP_NAME = 'web-app'
+        REPO_URL ="https://github.com/MohamedMagdy840/jenkins-repo.git"
     }
 
     stages {
-        stage('Checkout') {
+        stage('Getting Repo files') {
             steps {
-                script {
-                    git branch: "dev", url: 'https://github.com/MohamedMagdy840/jenkins-repo.git'
-                }
+                git branch: "${GIT_BRANCH}", credentialsId: 'github', url: "${REPO_URL}"
             }
         }
 
@@ -23,7 +17,7 @@ pipeline {
             steps {
                 script {
                     // Build Docker image
-                    sh 'docker build -t myapp:latest .'
+                    sh 'docker build -t ${APP_NAME}:${BUILD_NUMBER} .'
                 }
             }
         }
@@ -33,7 +27,7 @@ pipeline {
                 script {
                     // Run Docker image with build number in container name
                     sh """
-                        docker run --name "${ENV_NAME}"-${BUILD_NUMBER} -d myapp:latest
+                        docker run --name "${APP_NAME}"-${BUILD_NUMBER} -d ${APP_NAME}:${BUILD_NUMBER}
                         docker ps
                     """
                 }
