@@ -27,7 +27,7 @@ pipeline {
                 script {
                     // Run Docker image with build number in container name
                     sh """
-                        docker run --name "${APP_NAME}"-"${GIT_BRANCH}"-${BUILD_NUMBER} -d ${APP_NAME}:${BUILD_NUMBER}
+                        docker run -p 5000:5000 --name "${APP_NAME}"-"${GIT_BRANCH}"-${BUILD_NUMBER} -d ${APP_NAME}:${BUILD_NUMBER}
                         docker ps
                     """
                 }
