@@ -46,7 +46,7 @@ pipeline {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'docker', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                         sh """
-                            sed 's|IMAGE_PLACEHOLDER|${DOCKER_USERNAME}/${APP_NAME}:${BUILD_NUMBER}|' k8s/deployment.yaml > deployment-final.yaml
+                            sed 's|IMAGE_PLACEHOLDER|${DOCKER_USERNAME}/${APP_NAME}:${BUILD_NUMBER}|' k8s/deployment.yaml > k8s/deployment.yaml
 
                             kubectl apply -f k8s/deployment.yaml
                             kubectl apply -f k8s/service.yaml
