@@ -1,15 +1,15 @@
 pipeline {
     agent any
- 
+
     environment {
-        APP_NAME = 'new-app-nti' 
+        APP_NAME = 'new-app-nti'
         REPO_URL = "https://github.com/MohamedMagdy840/jenkins-repo.git"
     }
 
     stages {
         stage('Getting Repo files') {
             steps {
-                git branch: "main", credentialsId: 'github', url: "${REPO_URL}"
+                git branch: "main", credentialsId: 'jenkins', url: "${REPO_URL}"
             }
         }
 
@@ -41,13 +41,17 @@ pipeline {
             }
         }
 
-        stage('Run Docker Container') {
+        stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    sh """
-                        docker run -p 5000:5000 --name "${APP_NAME}"-"main"-${BUILD_NUMBER} -d ${APP_NAME}:${BUILD_NUMBER}
-                        docker ps
-                    """
+                    withCredentials([usernamePassword(credentialsId: 'docker', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        sh """
+                            sed 's|IMAGE_PLACEHOLDER|${DOCKER_USERNAME}/${APP_NAME}:${BUILD_NUMBER}|' k8s/deployment.yaml > deployment-final.yaml
+
+                            kubectl apply -f k8s/deployment.yaml
+                            kubectl apply -f k8s/service.yaml
+                        """
+                    }
                 }
             }
         }
